@@ -4,6 +4,7 @@
     <declare-styleable name="gwebview">
         <attr name="layout_error" format="reference"/>
         <attr name="layout_progress" format="reference"/>
+        <attr name="layout_nonet" format="reference"/>
     </declare-styleable>
 
 </resources>

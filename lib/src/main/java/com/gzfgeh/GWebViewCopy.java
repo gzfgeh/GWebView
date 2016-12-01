@@ -22,12 +22,10 @@ import com.gzfgeh.gwebview.R;
 
 public class GWebViewCopy extends FrameLayout {
     protected ViewGroup mProgressView;
-    protected ViewGroup mEmptyView;
     protected ViewGroup mErrorView;
     private WebView webview;
 
     private int mProgressId;
-    private int mEmptyId;
     private int mErrorId;
 
     private SettingBuilder settingBuilder;
@@ -57,7 +55,6 @@ public class GWebViewCopy extends FrameLayout {
     private void initAttrs(AttributeSet attrs) {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.gwebview);
         try {
-            mEmptyId = a.getResourceId(R.styleable.gwebview_layout_empty, 0);
             mProgressId = a.getResourceId(R.styleable.gwebview_layout_progress, 0);
             mErrorId = a.getResourceId(R.styleable.gwebview_layout_error, 0);
         }finally {
@@ -75,11 +72,6 @@ public class GWebViewCopy extends FrameLayout {
         if (mProgressId == 0)
             mProgressId = R.layout.view_progress;
         LayoutInflater.from(getContext()).inflate(mProgressId,mProgressView);
-
-        mEmptyView = (ViewGroup) v.findViewById(R.id.empty);
-        if (mEmptyId == 0)
-            mEmptyId = R.layout.view_empty;
-        LayoutInflater.from(getContext()).inflate(mEmptyId,mEmptyView);
 
         mErrorView = (ViewGroup) v.findViewById(R.id.error);
         if(mErrorId == 0)
@@ -143,28 +135,24 @@ public class GWebViewCopy extends FrameLayout {
 
     public void showErrorView(){
         webview.setVisibility(GONE);
-        mEmptyView.setVisibility(GONE);
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(VISIBLE);
     }
 
     public void showEmptyView(){
         webview.setVisibility(GONE);
-        mEmptyView.setVisibility(VISIBLE);
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(GONE);
     }
 
     public void showProgressView(){
         webview.setVisibility(GONE);
-        mEmptyView.setVisibility(GONE);
         mProgressView.setVisibility(VISIBLE);
         mErrorView.setVisibility(GONE);
     }
 
     public void showWebView(){
         webview.setVisibility(VISIBLE);
-        mEmptyView.setVisibility(GONE);
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(GONE);
     }
