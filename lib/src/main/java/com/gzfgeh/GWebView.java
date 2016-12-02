@@ -3,7 +3,9 @@ package com.gzfgeh;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
@@ -30,9 +32,13 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
     private ViewGroup mProgressView;
     private ViewGroup mErrorView;
     private ViewGroup mNoNetView;
+    private ViewGroup mHeaderView;
+    private ViewGroup mFooterView;
     private int mProgressId;
     private int mErrorId;
     private int mNoNetId;
+    private int mHeaderId;
+    private int mFooterId;
 
     private WebView webview;
     private OnLoadFinishListener listener;
@@ -76,6 +82,8 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
             mProgressId = a.getResourceId(R.styleable.gwebview_layout_progress, 0);
             mErrorId = a.getResourceId(R.styleable.gwebview_layout_error, 0);
             mNoNetId = a.getResourceId(R.styleable.gwebview_layout_nonet, 0);
+            mHeaderId = a.getResourceId(R.styleable.gwebview_layout_header, 0);
+            mFooterId = a.getResourceId(R.styleable.gwebview_layout_footer, 0);
         }finally {
             a.recycle();
         }
@@ -103,6 +111,8 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
             mNoNetId = R.layout.view_no_net;
         LayoutInflater.from(getContext()).inflate(mNoNetId,mNoNetView);
 
+        mHeaderView = (ViewGroup) v.findViewById(R.id.header);
+        mFooterView = (ViewGroup) v.findViewById(R.id.footer);
 
         mErrorView.setOnClickListener(new OnClickListener() {
             @Override
@@ -131,6 +141,26 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
     private void initWebView(View v) {
         webview = (WebView) v.findViewById(R.id.web_view_in);
         webview.setWebChromeClient(new GWebChromeClient());
+    }
+
+    private GWebView setHeaderView(View view){
+        if (view == null)
+            mHeaderView.setVisibility(GONE);
+        else{
+            mHeaderView.removeAllViews();
+            mHeaderView.addView(view);
+        }
+        return this;
+    }
+
+    private GWebView setFooterView(View view){
+        if (view == null)
+            mFooterView.setVisibility(GONE);
+        else{
+            mFooterView.removeAllViews();
+            mFooterView.addView(view);
+        }
+        return this;
     }
 
     @IntDef({Success, Error, NoNet, Loading})
@@ -199,29 +229,57 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
     }
 
     public static class Builder{
+        private Context context;
         private String url;
         private WebViewClient client;
         private WebChromeClient chromeClient;
+        private View headerView, footerView;
+
+        public Builder(Context context) {
+            this.context = context;
+        }
 
         public Builder loadUrl(@NonNull String s){
             url = s;
             return this;
         }
 
-        public Builder setWebViewClient(GWebViewClient webClient){
+        public Builder setWebViewClient(@NonNull GWebViewClient webClient){
             client = webClient;
             return this;
         }
 
-        public Builder setWebChromeClient(GWebChromeClient chromeClient){
+        public Builder setWebChromeClient(@NonNull GWebChromeClient chromeClient){
             this.chromeClient = chromeClient;
             return this;
         }
 
-        public void builder(GWebView gwebview){
+        public Builder addHeaderView(@NonNull View view){
+            headerView = view;
+            return this;
+        }
+
+        public Builder addHeaderView(@LayoutRes int layout){
+            headerView = LayoutInflater.from(context).inflate(layout, null);
+            return this;
+        }
+
+        public Builder addFooterView(@NonNull View view){
+            footerView = view;
+            return this;
+        }
+
+        public Builder addFooterView(@LayoutRes int layout){
+            footerView = LayoutInflater.from(context).inflate(layout, null);
+            return this;
+        }
+
+        public void setGWebView(GWebView gwebview){
             gwebview.getWebView().loadUrl(url);
             gwebview.getWebView().setWebViewClient(client);
             gwebview.getWebView().setWebChromeClient(chromeClient);
+            gwebview.setHeaderView(headerView);
+            gwebview.setFooterView(footerView);
         }
     }
 
