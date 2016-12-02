@@ -12,11 +12,14 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.gzfgeh.gwebview.R;
 
@@ -28,6 +31,7 @@ import com.gzfgeh.gwebview.R;
 public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout.OnRefreshListener refreshListener;
+    private ScrollView scrollView;
 
     private ViewGroup mProgressView;
     private ViewGroup mErrorView;
@@ -42,7 +46,6 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
 
     private WebView webview;
     private OnLoadFinishListener listener;
-    private Builder builder;
 
     public final static int Success = 0;
     public final static int Error = 1;
@@ -50,10 +53,6 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
     public final static int Loading = 3;
     private int status;
     private boolean isError;
-
-    public Builder getBuilder() {
-        return builder;
-    }
 
     public void setOnLoadListener(OnLoadFinishListener listener) {
         this.listener = listener;
@@ -99,20 +98,27 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         if (mProgressId == 0)
             mProgressId = R.layout.view_progress;
         LayoutInflater.from(getContext()).inflate(mProgressId,mProgressView);
+        mProgressView.setMinimumHeight(getWindowHeight()/2);
 
 
         mErrorView = (ViewGroup) v.findViewById(R.id.error);
         if(mErrorId == 0)
             mErrorId = R.layout.view_error;
         LayoutInflater.from(getContext()).inflate(mErrorId,mErrorView);
+        mErrorView.setMinimumHeight(getWindowHeight()/2);
 
         mNoNetView = (ViewGroup) v.findViewById(R.id.nonet);
         if(mNoNetId == 0)
             mNoNetId = R.layout.view_no_net;
         LayoutInflater.from(getContext()).inflate(mNoNetId,mNoNetView);
+        mNoNetView.setMinimumHeight(getWindowHeight()/2);
 
         mHeaderView = (ViewGroup) v.findViewById(R.id.header);
+        if (mHeaderId == 0)
+            mHeaderView.setVisibility(GONE);
         mFooterView = (ViewGroup) v.findViewById(R.id.footer);
+        if (mFooterId == 0)
+            mFooterView.setVisibility(GONE);
 
         mErrorView.setOnClickListener(new OnClickListener() {
             @Override
@@ -136,6 +142,7 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
     private void initSwipeView(View v) {
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(this);
+        scrollView = (ScrollView) v.findViewById(R.id.scrollView);
     }
 
     private void initWebView(View v) {
@@ -143,23 +150,48 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         webview.setWebChromeClient(new GWebChromeClient());
     }
 
-    private GWebView setHeaderView(View view){
-        if (view == null)
-            mHeaderView.setVisibility(GONE);
-        else{
-            mHeaderView.removeAllViews();
-            mHeaderView.addView(view);
-        }
+    public GWebView loadUrl(@NonNull String url){
+        webview.loadUrl(url);
         return this;
     }
 
-    private GWebView setFooterView(View view){
-        if (view == null)
-            mFooterView.setVisibility(GONE);
-        else{
-            mFooterView.removeAllViews();
-            mFooterView.addView(view);
-        }
+    public GWebView setWebViewClient(@NonNull GWebViewClient client){
+        webview.setWebViewClient(client);
+        return this;
+    }
+
+    public GWebView setWebChromeClient(@NonNull GWebChromeClient client){
+        webview.setWebChromeClient(client);
+        return this;
+    }
+
+    public GWebView addHeaderView(@NonNull View view){
+        if (mHeaderView.getVisibility() == GONE)
+            mHeaderView.setVisibility(VISIBLE);
+        mHeaderView.removeAllViews();
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mHeaderView.addView(view);
+        return this;
+    }
+
+    public GWebView addFooterView(View view){
+        if (mFooterView.getVisibility() == GONE)
+            mFooterView.setVisibility(VISIBLE);
+        mFooterView.removeAllViews();
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mFooterView.addView(view);
+        return this;
+    }
+
+    public GWebView addHeaderView(@LayoutRes int layout){
+        View view = LayoutInflater.from(getContext()).inflate(layout, null);
+        addHeaderView(view);
+        return this;
+    }
+
+    public GWebView addFooterView(@LayoutRes int layout){
+        View view = LayoutInflater.from(getContext()).inflate(layout, null);
+        addFooterView(view);
         return this;
     }
 
@@ -228,61 +260,6 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         webview.reload();
     }
 
-    public static class Builder{
-        private Context context;
-        private String url;
-        private WebViewClient client;
-        private WebChromeClient chromeClient;
-        private View headerView, footerView;
-
-        public Builder(Context context) {
-            this.context = context;
-        }
-
-        public Builder loadUrl(@NonNull String s){
-            url = s;
-            return this;
-        }
-
-        public Builder setWebViewClient(@NonNull GWebViewClient webClient){
-            client = webClient;
-            return this;
-        }
-
-        public Builder setWebChromeClient(@NonNull GWebChromeClient chromeClient){
-            this.chromeClient = chromeClient;
-            return this;
-        }
-
-        public Builder addHeaderView(@NonNull View view){
-            headerView = view;
-            return this;
-        }
-
-        public Builder addHeaderView(@LayoutRes int layout){
-            headerView = LayoutInflater.from(context).inflate(layout, null);
-            return this;
-        }
-
-        public Builder addFooterView(@NonNull View view){
-            footerView = view;
-            return this;
-        }
-
-        public Builder addFooterView(@LayoutRes int layout){
-            footerView = LayoutInflater.from(context).inflate(layout, null);
-            return this;
-        }
-
-        public void setGWebView(GWebView gwebview){
-            gwebview.getWebView().loadUrl(url);
-            gwebview.getWebView().setWebViewClient(client);
-            gwebview.getWebView().setWebChromeClient(chromeClient);
-            gwebview.setHeaderView(headerView);
-            gwebview.setFooterView(footerView);
-        }
-    }
-
     public class GWebViewClient extends WebViewClient{
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -305,6 +282,7 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
                 }else {
                     setStatus(Success);
                 }
+
             }
             super.onProgressChanged(view, newProgress);
         }
@@ -312,6 +290,11 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
 
     public interface OnLoadFinishListener{
         void loadFinish();
+    }
+
+    public int getWindowHeight(){
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        return wm.getDefaultDisplay().getHeight();
     }
 
 }

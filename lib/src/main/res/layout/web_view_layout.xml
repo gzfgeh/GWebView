@@ -7,7 +7,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:id="@+id/scrollView">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,13 +23,11 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="match_parent">
 
                 <WebView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/web_view_in"
                     android:descendantFocusability="blocksDescendants"
                     android:focusableInTouchMode="false"
@@ -58,7 +56,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clickable="true"
                 android:layout_gravity="center"
                 android:id="@+id/footer"/>

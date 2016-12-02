@@ -22,15 +22,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        new GWebView.Builder(this)
-                .loadUrl("https://www.baidu.com")
-                .addHeaderView(R.layout.head_view)
+        webView.loadUrl("https://www.baidu.com")
+                .addFooterView(R.layout.head_view)
                 .setWebViewClient(webView.new GWebViewClient(){
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                         view.loadUrl(url);
                         return true;
                     }
-                }).setGWebView(webView);
+                });
     }
 }
