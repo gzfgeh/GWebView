@@ -2,9 +2,11 @@ package com.gzfgeh.demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.webkit.WebChromeClient;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.gzfgeh.GWebView;
 
@@ -22,14 +24,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        webView.loadUrl("https://www.baidu.com")
-                .addFooterView(R.layout.head_view)
-                .setWebViewClient(webView.new GWebViewClient(){
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-                });
+        webView.loadUrl("https://www.google.com");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item = menu.findItem(R.id.checkbox);
+        CheckBox box = (CheckBox) item.getActionView();
+        box.setChecked(true);
+        box.setText("URL");
+        box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    webView.loadUrl("https://www.google.com");
+                else {
+                    webView.loadUrl("https://www.baidu.com");
+                }
+            }
+        });
+        return true;
     }
 }
