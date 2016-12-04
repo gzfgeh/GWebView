@@ -154,11 +154,9 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
 
     private void initWebView(View v) {
         webview = (WebView) v.findViewById(R.id.web_view_in);
-        webview.setWebChromeClient(new GWebView.GWebChromeClient());
         new SettingBuilder(getContext(), webview);
         mObservable = Observable.timer(timeOut, TimeUnit.SECONDS);
         setWebViewClient(new GWebViewClient());
-        webview.clearCache(true);
     }
 
     /**
@@ -173,7 +171,7 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
                         if (subscription != null) {
                             isError = true;
                             setStatus(Error);
-                            //endTime();
+                            endTime();
                         }
                     }
                 });
@@ -186,13 +184,15 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         if (subscription != null) {
             subscription.unsubscribe();
             subscription = null;
+            webview.pauseTimers();
+            webview.stopLoading();
         }
     }
 
     public GWebView loadUrl(@NonNull String url){
         this.url = url;
         webview.loadUrl(url);
-        //startTime();
+        startTime();
         setStatus(Loading);
         return this;
     }
@@ -202,7 +202,7 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         return this;
     }
 
-    public GWebView setWebChromeClient(@NonNull GWebView.GWebChromeClient client){
+    public GWebView setWebChromeClient(@NonNull WebChromeClient client){
         webview.setWebChromeClient(client);
         return this;
     }
@@ -274,8 +274,8 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         if (refreshListener != null)
             refreshListener.onRefresh();
 
-        loadUrl(url);
-        //startTime();
+        webview.loadUrl(url);
+        startTime();
     }
 
     public static class SettingBuilder{
@@ -317,9 +317,10 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            Log.i("newProgress", url+"");
             if (listener != null)
                 listener.loadFinish();
-            //endTime();
+            endTime();
             swipeRefreshLayout.setRefreshing(false);
 
             if (!NetWorkUtils.isNetworkAvailable(getContext())){
@@ -334,30 +335,6 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             isError = true;
-        }
-    }
-
-    public class GWebChromeClient extends WebChromeClient{
-
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            Log.i("newProgress", newProgress+"");
-//            if (newProgress == 100){
-//                if (listener != null)
-//                    listener.loadFinish();
-//                endTime();
-//                swipeRefreshLayout.setRefreshing(false);
-//
-//                if (!NetWorkUtils.isNetworkAvailable(getContext())){
-//                    setStatus(NoNet);
-//                }else if (isError) {
-//                    setStatus(Error);
-//                }else {
-//                    setStatus(Success);
-//                }
-//            }
-
-            super.onProgressChanged(view, newProgress);
         }
     }
 
