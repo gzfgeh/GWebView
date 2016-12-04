@@ -5,8 +5,6 @@
         <attr name="layout_error" format="reference"/>
         <attr name="layout_progress" format="reference"/>
         <attr name="layout_nonet" format="reference"/>
-        <attr name="layout_header" format="reference"/>
-        <attr name="layout_footer" format="reference"/>
     </declare-styleable>
 
 </resources>

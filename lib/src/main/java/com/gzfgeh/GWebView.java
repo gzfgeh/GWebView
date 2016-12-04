@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +22,11 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import com.gzfgeh.gwebview.R;
+import com.gzfgeh.swipeheader.SwipeRefreshLayout;
 
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -37,9 +37,9 @@ import rx.schedulers.Schedulers;
  * Created by guzhenfu on 2016/11/23 11:19.
  */
 
-public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener {
+public class GWebView extends FrameLayout implements android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SwipeRefreshLayout.OnRefreshListener refreshListener;
+    private android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener refreshListener;
     private ScrollView scrollView;
 
     private ViewGroup mProgressView;
@@ -129,19 +129,24 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
             mNoNetId = R.layout.view_no_net;
         LayoutInflater.from(getContext()).inflate(mNoNetId,mNoNetView);
 
+        if (mErrorId == R.layout.view_error){
+            mErrorView.findViewById(R.id.reload).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadUrl(url);
+                }
+            });
+        }
 
-        mErrorView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadUrl(url);
-            }
-        });
-        mNoNetView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadUrl(url);
-            }
-        });
+        if (mNoNetId == R.layout.view_no_net){
+            mNoNetView.findViewById(R.id.reload).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadUrl(url);
+                }
+            });
+        }
+
         initWebView(v);
         initSwipeView(v);
     }
@@ -276,6 +281,48 @@ public class GWebView extends FrameLayout implements SwipeRefreshLayout.OnRefres
 
         webview.loadUrl(url);
         startTime();
+    }
+
+
+    public GWebView setProgressLoading(@LayoutRes int id){
+        mProgressView.removeAllViews();
+        mProgressId = id;
+        LayoutInflater.from(getContext()).inflate(id,mProgressView);
+        return this;
+    }
+
+    public GWebView setErrorLayout(@LayoutRes int id){
+        mErrorView.removeAllViews();
+        mErrorId = id;
+        LayoutInflater.from(getContext()).inflate(id,mErrorView);
+        return this;
+    }
+
+    public GWebView setNoNetLayout(@LayoutRes int id){
+        mNoNetView.removeAllViews();
+        mNoNetId = id;
+        LayoutInflater.from(getContext()).inflate(id,mNoNetView);
+        return this;
+    }
+
+    public GWebView setErrorReloadId(@IdRes int reloadId){
+        mErrorView.findViewById(reloadId).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadUrl(url);
+            }
+        });
+        return this;
+    }
+
+    public GWebView setNoNetReloadId(@IdRes int reloadId){
+        mNoNetView.findViewById(reloadId).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadUrl(url);
+            }
+        });
+        return this;
     }
 
     public static class SettingBuilder{
