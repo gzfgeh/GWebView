@@ -8,12 +8,14 @@
 3. 增加默认的加载中、无网络判断、服务器错误页面
 4. 一般app都有显示自己app特点的加载中、无网络判断、服务器错误页面，很简单就可以切换 <br>
     ```
+    
     <com.gzfgeh.GWebView xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/web_view"
               app:layout_error="@layout/error_layout" />
+	      
     ```
 5. 一般错误页面都有重新加载按钮，所以代码中提供了设置重载方式
     ```java
