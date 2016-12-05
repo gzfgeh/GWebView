@@ -21,3 +21,9 @@
         .setErrorReloadId(R.id.reload);
     ```
 6. 所有设置都是链式方式设置
+7. 使用
+
+    Add it in your root build.gradle at the end of repositories: <br>  
+        maven { url "https://jitpack.io" } <br>  
+    Add the dependency  <br>  
+	    compile 'com.github.gzfgeh:GWebView:v1.0.0' 
