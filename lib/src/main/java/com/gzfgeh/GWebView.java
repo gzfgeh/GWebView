@@ -45,9 +45,13 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
     private ViewGroup mProgressView;
     private ViewGroup mErrorView;
     private ViewGroup mNoNetView;
+    private ViewGroup mHeaderView;
+    private ViewGroup mFooterView;
     private int mProgressId;
     private int mErrorId;
     private int mNoNetId;
+    private int mHeaderId;
+    private int mFooterId;
 
     private WebView webview;
     private GWebView.OnLoadFinishListener listener;
@@ -147,6 +151,13 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
             });
         }
 
+        mHeaderView = (ViewGroup) v.findViewById(R.id.header);
+        if (mHeaderId == 0)
+            mHeaderView.setVisibility(GONE);
+        mFooterView = (ViewGroup) v.findViewById(R.id.footer);
+        if (mFooterId == 0)
+            mFooterView.setVisibility(GONE);
+
         initWebView(v);
         initSwipeView(v);
     }
@@ -178,6 +189,8 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
                             setStatus(Error);
                             endTime();
                         }
+                        webview.pauseTimers();
+                        webview.stopLoading();
                     }
                 });
     }
@@ -189,9 +202,27 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
         if (subscription != null) {
             subscription.unsubscribe();
             subscription = null;
-            webview.pauseTimers();
-            webview.stopLoading();
         }
+    }
+
+    /**
+     * 增加头部
+     * @param view
+     * @return
+     */
+    public GWebView addHeaderView(@NonNull View view){
+        if (mHeaderView.getVisibility() == GONE)
+            mHeaderView.setVisibility(VISIBLE);
+        mHeaderView.removeAllViews();
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mHeaderView.addView(view);
+        return this;
+    }
+
+    public GWebView addHeaderView(@LayoutRes int layout){
+        View view = LayoutInflater.from(getContext()).inflate(layout, null);
+        addHeaderView(view);
+        return this;
     }
 
     public GWebView loadUrl(@NonNull String url){
@@ -246,7 +277,6 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(VISIBLE);
         mNoNetView.setVisibility(GONE);
-        scrollView.setFillViewport(true);
     }
 
     private void showProgressView(){
@@ -255,7 +285,6 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
         mProgressView.setVisibility(VISIBLE);
         mErrorView.setVisibility(GONE);
         mNoNetView.setVisibility(GONE);
-        scrollView.setFillViewport(true);
     }
 
     private void showNoNetView(){
@@ -263,7 +292,6 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(GONE);
         mNoNetView.setVisibility(VISIBLE);
-        scrollView.setFillViewport(true);
     }
 
     private void showWebView(){
@@ -271,7 +299,6 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
         mProgressView.setVisibility(GONE);
         mErrorView.setVisibility(GONE);
         mNoNetView.setVisibility(GONE);
-        scrollView.setFillViewport(true);
     }
 
     @Override

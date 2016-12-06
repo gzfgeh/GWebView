@@ -9,38 +9,58 @@
         android:layout_height="match_parent"
         android:id="@+id/scrollView">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <WebView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/web_view_in"
-                    android:descendantFocusability="blocksDescendants"
-                    android:focusableInTouchMode="false"
-                    android:focusable="false"/>
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_gravity="center"
+                android:id="@+id/header"/>
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:layout_gravity="center"
-                    android:id="@+id/progress"/>
+                    android:layout_height="match_parent">
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:id="@+id/error"/>
+                    <WebView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/web_view_in"
+                        android:descendantFocusability="blocksDescendants"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"/>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:id="@+id/nonet"/>
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:layout_gravity="center"
+                        android:id="@+id/progress"/>
 
-            </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:id="@+id/error"/>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:id="@+id/nonet"/>
+
+                </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:layout_gravity="center"
+                android:id="@+id/footer"/>
+        </LinearLayout>
 
     </ScrollView>
 

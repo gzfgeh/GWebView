@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        webView.loadUrl("https://www.google.com")
-        .setErrorReloadId(R.id.reload);
+        webView.loadUrl("http://appnative.uat.shcem.com/main.html")
+        .setErrorReloadId(R.id.reload)
+        .addHeaderView(R.layout.error_layout);
     }
 
     @Override
