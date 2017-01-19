@@ -3,6 +3,8 @@ package com.gzfgeh;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
@@ -398,7 +400,7 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
             endTime();
             swipeRefreshLayout.setRefreshing(false);
 
-            if (!NetWorkUtils.isNetworkAvailable(getContext())){
+            if (!isNetworkAvailable(getContext())){
                 setStatus(NoNet);
             }else if (isError) {
                 setStatus(Error);
@@ -415,6 +417,24 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
 
     public interface OnLoadFinishListener{
         void loadFinish();
+    }
+
+    private boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            //如果仅仅是用来判断网络连接
+            //则可以使用 cm.getActiveNetworkInfo().isAvailable();
+            NetworkInfo[] info = cm.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }
