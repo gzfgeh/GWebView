@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -376,7 +377,7 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
             webSettings.setGeolocationDatabasePath(dir);
             webSettings.setGeolocationEnabled(true);// 启用地理定位
             webSettings.setDomStorageEnabled(true);
-
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             webSettings.setDefaultFontSize((int)15);
         }
 
