@@ -62,7 +62,7 @@ public class GWebView extends FrameLayout implements android.support.v4.widget.S
 
     private Observable<Long> mObservable;
     private Subscription subscription;
-    private int timeOut = 5;
+    private int timeOut = 10;
 
     public final static int Success = 0;
     public final static int Error = 1;
